@@ -31,7 +31,7 @@ app.get('/blog', async (req, res) => {
 app.get('/blog/:name', (req, res) => {
     const {name} = req.params;
     const blog = readFile('blog_posts', name, 'txt');
-    const templated = index.replace(/{%CONTENT%}/g, `<p>${blog}</p>`);
+    const templated = index.replace(/{%CONTENT%}/g, `<a href="/blog"><- blog-index</a><p>${blog}</p>`);
     res.send(templated);
 });
 
