@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const readFile = (fileName) => {
-    return fs.readFileSync(path.join(__dirname, `/html/${fileName}.html`), 'utf-8');
+const readFile = (dirName, fileName, type) => {
+    return fs.readFileSync(path.join(__dirname, `/${dirName}/${fileName}.${type}`), 'utf-8');
 }
 
 const getBlogPostNames = async () => {
