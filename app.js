@@ -1,10 +1,13 @@
 const express = require('express');
-const { readFile, getBlogPostNames } = require('./utils.js');
+const path = require('path');
+const { readFile, getBlogPostNames, getResume } = require('./utils.js');
 
 const port = process.env.PORT || 5000;
 const index = readFile('html', 'index', 'html');
 
 const app = express();
+
+app.use('/resume', express.static(path.join(__dirname, 'vincent_william_resume.pdf')));
 
 app.get('/', async (req, res) => {
     const home = readFile('html', 'home', 'html');
@@ -15,26 +18,9 @@ app.get('/', async (req, res) => {
 
 app.get('/blog', async (req, res) => {
     const blog = readFile('html', 'blog', 'html');
-    const postNames = await getBlogPostNames();
-
-    const parseFileNames = postNames.map(fileName => {
-        const name = fileName.split('.')[0];
-        const [date, title] = name.split(':');
-        return {
-                data: `<li><a href="/blog/${date}:${title}">${title}</a> -- ${date}</li>`,
-                date
-            }
-    });
-
-    const sortFilesByDateReverse = parseFileNames.sort((a,b) => {
-        if(a.date < b.date) return 1
-        if(b.date < a.date) return -1;
-        return 0;
-    });
-
-    const htmlStringsOnly = sortFilesByDateReverse.map(obj => obj.data);
+    const postData = await getBlogPostNames();
     const templated =  index.replace(/{%CONTENT%}/g, blog);
-    const templatedWithPostNames = templated.replace(/{%CONTENT%}/g, htmlStringsOnly.join(''));
+    const templatedWithPostNames = templated.replace(/{%CONTENT%}/g, postData.join(''));
 
     res.send(templatedWithPostNames);
 });
@@ -43,6 +29,7 @@ app.get('/blog/:name', (req, res) => {
     const {name} = req.params;
     const blog = readFile('blog_posts', name, 'txt');
     const templated = index.replace(/{%CONTENT%}/g, `<a href="/blog"><- blog-index</a><p>${blog}</p>`);
+
     res.send(templated);
 });
 

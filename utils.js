@@ -6,7 +6,26 @@ const readFile = (dirName, fileName, type) => {
 }
 
 const getBlogPostNames = async () => {
-    return await fs.promises.readdir('blog_posts');
+    const postNames = await fs.promises.readdir('blog_posts');
+    
+    const parseFileNames = postNames.map(fileName => {
+        const name = fileName.split('.')[0];
+        const [date, title] = name.split(':');
+        return {
+                data: `<li><a href="/blog/${date}:${title}">${title}</a> -- ${date}</li>`,
+                date
+            }
+    });
+
+    const sortFilesByDateReverse = parseFileNames.sort((a,b) => {
+        if(a.date < b.date) return 1
+        if(b.date < a.date) return -1;
+        return 0;
+    });
+
+    const htmlStringsOnly = sortFilesByDateReverse.map(obj => obj.data);
+    
+    return htmlStringsOnly;
 };
 
-module.exports = { readFile, getBlogPostNames };
+module.exports = { readFile, getBlogPostNames};
