@@ -17,14 +17,25 @@ app.get('/blog', async (req, res) => {
     const blog = readFile('html', 'blog', 'html');
     const postNames = await getBlogPostNames();
 
-    const listItemPostNames = postNames.map(fileName => {
+    const parseFileNames = postNames.map(fileName => {
         const name = fileName.split('.')[0];
-        return `<li><a href="/blog/${name}">${name}</a></li>`
+        const [date, title] = name.split(':');
+        return {
+                data: `<li><a href="/blog/${date}:${title}">${title}</a> -- ${date}</li>`,
+                date
+            }
     });
-    
+
+    const sortFilesByDateReverse = parseFileNames.sort((a,b) => {
+        if(a.date < b.date) return 1
+        if(b.date < a.date) return -1;
+        return 0;
+    });
+
+    const htmlStringsOnly = sortFilesByDateReverse.map(obj => obj.data);
     const templated =  index.replace(/{%CONTENT%}/g, blog);
-    const templatedWithPostNames = templated.replace(/{%CONTENT%}/g, listItemPostNames.join(''));
-    
+    const templatedWithPostNames = templated.replace(/{%CONTENT%}/g, htmlStringsOnly.join(''));
+
     res.send(templatedWithPostNames);
 });
 
