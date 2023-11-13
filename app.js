@@ -53,4 +53,11 @@ app.get('/projects', async (req, res) => {
     res.send(templated)
 });
 
+app.get('/contact', async (req, res) => {
+    const contact = readFile('html', 'contact', 'html');
+    const templated =  index.replace(/{%CONTENT%}/g, contact);
+
+    res.send(templated)
+});
+
 app.listen(port, () => console.log(`listening at port ${port}`));
