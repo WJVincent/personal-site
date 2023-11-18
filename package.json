@@ -5,7 +5,7 @@
   "main": "index.js",
   "author": "William Vincent",
   "license": "MIT",
-  "scripts":{
+  "scripts": {
     "start": "node app.js"
   },
   "dependencies": {
