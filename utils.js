@@ -14,7 +14,7 @@ const getBlogPostNames = async () => {
         return {
             data: `<li><a href="/blog/${date}:${title}">${title}</a> -- ${date}</li>`,
             date
-        }
+        };
     });
 
     const sortFilesByDateReverse = parseFileNames.sort((a, b) => {
@@ -29,3 +29,4 @@ const getBlogPostNames = async () => {
 };
 
 module.exports = { readFile, getBlogPostNames };
+
