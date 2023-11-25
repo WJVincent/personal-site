@@ -1,12 +1,15 @@
 const express = require('express');
+const showdown = require('showdown');
 const path = require('path');
 
 const { readFile, getBlogPostNames } = require('./utils.js');
+const Showdown = require('showdown');
 
 const port = process.env.PORT || 5000;
 const index = readFile('html', 'index', 'html');
 
 const app = express();
+const convertor = new showdown.Converter();
 
 app.use('/resume', express.static(path.join(__dirname, 'vincent_william_resume.pdf')));
 
@@ -28,8 +31,9 @@ app.get('/blog', async (_req, res) => {
 
 app.get('/blog/:name', (req, res) => {
     const {name} = req.params;
-    const blog = readFile('blog_posts', name, 'txt');
-    const templated = index.replace(/{%CONTENT%}/g, `<a href="/blog"><- blog-index</a><p>${blog}</p>`);
+    const blog = readFile('blog_posts', name, 'md');
+    const content = convertor.makeHtml(blog);
+    const templated = index.replace(/{%CONTENT%}/g, `<a href="/blog"><- blog-index</a><div>${content}</div>`);
 
     res.send(templated);
 });
