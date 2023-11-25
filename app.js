@@ -3,7 +3,6 @@ const showdown = require('showdown');
 const path = require('path');
 
 const { readFile, getBlogPostNames } = require('./utils.js');
-const Showdown = require('showdown');
 
 const port = process.env.PORT || 5000;
 const index = readFile('html', 'index', 'html');
