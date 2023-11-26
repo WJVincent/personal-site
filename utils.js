@@ -1,6 +1,19 @@
 const fs = require('fs');
 const path = require('path');
 
+   
+const convertBytes = (x) => {
+  const units = ['bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+
+  let l = 0, n = parseInt(x, 10) || 0;
+
+  while(n >= 1024 && ++l){
+      n = n/1024;
+  }
+  
+  return(n.toFixed(n < 10 && l > 0 ? 1 : 0) + ' ' + units[l]);
+}
+
 const readFile = (dirName, fileName, type) => {
     return fs.readFileSync(path.join(__dirname, `/${dirName}/${fileName}.${type}`), 'utf-8');
 }
@@ -28,5 +41,5 @@ const getBlogPostNames = async () => {
     return htmlStringsOnly;
 };
 
-module.exports = { readFile, getBlogPostNames };
+module.exports = { readFile, getBlogPostNames, convertBytes };
 
