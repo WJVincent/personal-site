@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-   
+// code taken from SO, could be broken, test more   
 const convertBytes = (x) => {
   const units = ['bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
 
