@@ -1,5 +1,5 @@
 const express = require('express');
-const showdown = require('showdown');
+const showdown = require('showdown'); // markdown -> html convertor
 const path = require('path');
 
 const { readFile, getBlogPostNames, convertBytes } = require('./utils.js');
