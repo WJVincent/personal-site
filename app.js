@@ -1,6 +1,7 @@
 const express = require('express');
 const showdown = require('showdown'); // markdown -> html convertor
 const path = require('path');
+const xmlescape = require('xml-escape');
 
 const { readFile, getBlogPostNames, convertBytes, readRssFeed } = require('./utils.js');
 
@@ -71,7 +72,7 @@ app.get('/feed.rss', async (_req, res) => {
         const data = readFile('blog_posts', name, 'md');
         const term = `{%${name}%}`;
         const re = new RegExp(term);
-        rss = rss.replace(re, convertor.makeHtml(data));
+        rss = rss.replace(re, xmlescape(convertor.makeHtml(data)));
     }); 
 
     res.set('Content-Type', 'text/xml');
