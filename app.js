@@ -74,6 +74,7 @@ app.get('/feed.rss', async (_req, res) => {
         rss = rss.replace(re, convertor.makeHtml(data));
     }); 
 
+    res.set('Content-Type', 'text/xml');
     res.send(rss);
 });
 
