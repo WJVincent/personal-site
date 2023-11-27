@@ -1,7 +1,7 @@
 const express = require('express');
+const xmlescape = require('xml-escape');
 const showdown = require('showdown'); // markdown -> html convertor
 const path = require('path');
-const xmlescape = require('xml-escape');
 
 const { readFile, getBlogPostNames, convertBytes, readRssFeed } = require('./utils.js');
 
