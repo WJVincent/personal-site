@@ -71,7 +71,7 @@ app.get('/feed.rss', async (_req, res) => {
         const data = readFile('blog_posts', name, 'md');
         const term = `{%${name}%}`;
         const re = new RegExp(term);
-        rss = rss.replace(re, convertor.makeHtml(data));
+        rss = rss.replace(re, data);
     }); 
 
     res.send(rss);
