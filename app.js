@@ -62,16 +62,16 @@ app.get('/contact', async (_req, res) => {
 });
 
 app.get('/feed.rss', async (_req, res) => {
-    let rss = readRssFeed()
+    let rss = readRssFeed();
     const blogData = await getBlogPostNames();
     const blogNames = blogData.map(post => post[1]); 
 
     blogNames.forEach(fileName => {
         const [name, _fileExt] = fileName.split('.')
         const data = readFile('blog_posts', name, 'md');
-        const term = `%${name}%`;
+        const term = `{%${name}%}`;
         const re = new RegExp(term);
-        rss = rss.replace(re, data);
+        rss = rss.replace(re, convertor.makeHtml(data));
     }); 
 
     res.send(rss);
