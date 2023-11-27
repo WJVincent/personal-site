@@ -1,0 +1,17 @@
+---
+permalink: /feed.rss
+---
+
+<rss version="2.0">
+    <channel>
+        <title>William Vincent's Blog</title> 
+	<link>https://william-vincent.dev</link>
+	<description>Mid programming blog</description>
+        <language>en-us</language>
+            <item>
+                <title>Why I'm Learning C</title>
+                <link>https://william-vincent.dev/blog/2023-11-27_why-im-learning-c</link>
+                <pubDate>Mon, 27 Nov 2023 00:00:00 000</pubDate>
+            </item>
+    </channel>
+</rss>

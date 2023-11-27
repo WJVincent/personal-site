@@ -2,7 +2,7 @@ const express = require('express');
 const showdown = require('showdown'); // markdown -> html convertor
 const path = require('path');
 
-const { readFile, getBlogPostNames, convertBytes } = require('./utils.js');
+const { readFile, getBlogPostNames, convertBytes, readRssFeed } = require('./utils.js');
 
 const port = process.env.PORT || 5000;
 const index = readFile('html', 'index', 'html');
@@ -59,6 +59,11 @@ app.get('/contact', async (_req, res) => {
     const finalRes = templated.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
 
     res.send(finalRes);
+});
+
+app.get('/feed.rss', async (_req, res) => {
+    const rss = readRssFeed()
+    res.send(rss);
 });
 
 app.listen(port, () => console.log(`listening at port ${port}`));

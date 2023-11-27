@@ -41,5 +41,9 @@ const getBlogPostNames = async () => {
     return htmlStringsOnly;
 };
 
-module.exports = { readFile, getBlogPostNames, convertBytes };
+const readRssFeed = () => {
+    return fs.readFileSync(path.join(__dirname, '/rss.xml'), 'utf-8');
+}
+
+module.exports = { readFile, getBlogPostNames, convertBytes, readRssFeed };
 
