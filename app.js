@@ -16,7 +16,7 @@ app.get('/', async (_req, res) => {
     const home = readFile('html', 'home', 'html');
     const templated =  index.replace(/{%CONTENT%}/g, home);
     const size = new Blob([templated]).size;
-    const finalRes = templated.replace(/{%PAGE_SIZE%}/g, convertBytes(size))
+    const finalRes = templated.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
 
     res.send(finalRes);
 });
@@ -27,7 +27,7 @@ app.get('/blog', async (_req, res) => {
     const templated =  index.replace(/{%CONTENT%}/g, blog);
     const templatedWithPostNames = templated.replace(/{%CONTENT%}/g, postData.join(''));
     const size = new Blob([templatedWithPostNames]).size;
-    const finalRes = templatedWithPostNames.replace(/{%PAGE_SIZE%}/g, convertBytes(size))
+    const finalRes = templatedWithPostNames.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
 
     res.send(finalRes);
 });
@@ -38,7 +38,7 @@ app.get('/blog/:name', (req, res) => {
     const content = convertor.makeHtml(blog);
     const templated = index.replace(/{%CONTENT%}/g, `<a href="/blog"><- blog-index</a><div>${content}</div>`);
     const size = new Blob([templated]).size;
-    const finalRes = templated.replace(/{%PAGE_SIZE%}/g, convertBytes(size))
+    const finalRes = templated.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
 
     res.send(finalRes);
 });
@@ -47,7 +47,7 @@ app.get('/projects', async (_req, res) => {
     const projects = readFile('html', 'projects', 'html');
     const templated =  index.replace(/{%CONTENT%}/g, projects);
     const size = new Blob([templated]).size;
-    const finalRes = templated.replace(/{%PAGE_SIZE%}/g, convertBytes(size))
+    const finalRes = templated.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
 
     res.send(finalRes);
 });
@@ -56,7 +56,7 @@ app.get('/contact', async (_req, res) => {
     const contact = readFile('html', 'contact', 'html');
     const templated =  index.replace(/{%CONTENT%}/g, contact);
     const size = new Blob([templated]).size;
-    const finalRes = templated.replace(/{%PAGE_SIZE%}/g, convertBytes(size))
+    const finalRes = templated.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
 
     res.send(finalRes);
 });

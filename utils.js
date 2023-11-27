@@ -23,9 +23,9 @@ const getBlogPostNames = async () => {
 
     const parseFileNames = postNames.map(fileName => {
         const name = fileName.split('.')[0];
-        const [date, title] = name.split(':');
+        const [date, title] = name.split('_');
         return {
-            data: `<li><a href="/blog/${date}:${title}">${title}</a> -- ${date}</li>`,
+            data: `<li><a href="/blog/${date}_${title}">${title}</a> -- ${date}</li>`,
             date
         };
     });
