@@ -26,7 +26,8 @@ const getBlogPostNames = async () => {
         const [date, title] = name.split('_');
         return {
             data: `<li><a href="/blog/${date}_${title}">${title}</a> -- ${date}</li>`,
-            date
+            date,
+            fileName
         };
     });
 
@@ -36,9 +37,9 @@ const getBlogPostNames = async () => {
         return 0;
     });
 
-    const htmlStringsOnly = sortFilesByDateReverse.map(obj => obj.data);
+    const html = sortFilesByDateReverse.map(obj => [obj.data, obj.fileName]);
 
-    return htmlStringsOnly;
+    return html; 
 };
 
 const readRssFeed = () => {

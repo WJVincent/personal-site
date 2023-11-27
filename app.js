@@ -25,7 +25,7 @@ app.get('/blog', async (_req, res) => {
     const blog = readFile('html', 'blog', 'html');
     const postData = await getBlogPostNames();
     const templated =  index.replace(/{%CONTENT%}/g, blog);
-    const templatedWithPostNames = templated.replace(/{%CONTENT%}/g, postData.join(''));
+    const templatedWithPostNames = templated.replace(/{%CONTENT%}/g, postData.map(post => post[0]).join(''));
     const size = new Blob([templatedWithPostNames]).size;
     const finalRes = templatedWithPostNames.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
 
@@ -62,7 +62,18 @@ app.get('/contact', async (_req, res) => {
 });
 
 app.get('/feed.rss', async (_req, res) => {
-    const rss = readRssFeed()
+    let rss = readRssFeed()
+    const blogData = await getBlogPostNames();
+    const blogNames = blogData.map(post => post[1]); 
+
+    blogNames.forEach(fileName => {
+        const [name, _fileExt] = fileName.split('.')
+        const data = readFile('blog_posts', name, 'md');
+        const term = `%${name}%`;
+        const re = new RegExp(term);
+        rss = rss.replace(re, data);
+    }); 
+
     res.send(rss);
 });
 
