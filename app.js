@@ -13,6 +13,13 @@ const convertor = new showdown.Converter();
 
 app.use('/resume', express.static(path.join(__dirname, 'vincent_william_resume.pdf')));
 
+app.get('/42', (_req, res) => {
+    res.send(`What is the meaning of life, the universe and everything?  *42*
+    Douglas Adams, the only person who knew what this question really was about is
+    now dead, unfortunately.  So now you might wonder what the meaning of death
+    is...`);
+});
+
 app.get('/', async (_req, res) => {
     const home = readFile('html', 'home', 'html');
     const templated =  index.replace(/{%CONTENT%}/g, home);
