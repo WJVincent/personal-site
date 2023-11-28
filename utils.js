@@ -46,5 +46,16 @@ const readRssFeed = () => {
     return fs.readFileSync(path.join(__dirname, '/rss.xml'), 'utf-8');
 }
 
-module.exports = { readFile, getBlogPostNames, convertBytes, readRssFeed };
+const getBinTime = () => {
+    const date = new Date();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    const hoursBin = hours.toString(2);
+    const minutesBin = minutes.toString(2);
+
+    return { hour: hoursBin, minute: minutesBin};
+}
+
+module.exports = { readFile, getBlogPostNames, convertBytes, readRssFeed, getBinTime };
 

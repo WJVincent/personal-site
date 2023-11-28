@@ -3,7 +3,7 @@ const xmlescape = require('xml-escape');
 const showdown = require('showdown'); // markdown -> html convertor
 const path = require('path');
 
-const { readFile, getBlogPostNames, convertBytes, readRssFeed } = require('./utils.js');
+const { readFile, getBlogPostNames, convertBytes, readRssFeed, getBinTime } = require('./utils.js');
 
 const port = process.env.PORT || 5000;
 const index = readFile('html', 'index', 'html');
@@ -25,8 +25,10 @@ app.get('/', async (_req, res) => {
     const templated =  index.replace(/{%CONTENT%}/g, home);
     const size = new Blob([templated]).size;
     const finalRes = templated.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
-
-    res.send(finalRes);
+    
+    const { hour, minute } = getBinTime();
+    const withClock = finalRes.replace(/{%CLOCK%}/g, `Hour: ${hour}, Minute: ${minute}`)
+    res.send(withClock);
 });
 
 app.get('/blog', async (_req, res) => {
@@ -37,7 +39,9 @@ app.get('/blog', async (_req, res) => {
     const size = new Blob([templatedWithPostNames]).size;
     const finalRes = templatedWithPostNames.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
 
-    res.send(finalRes);
+    const { hour, minute } = getBinTime();
+    const withClock = finalRes.replace(/{%CLOCK%}/g, `Hour: ${hour}, Minute: ${minute}`)
+    res.send(withClock);
 });
 
 app.get('/blog/:name', (req, res) => {
@@ -48,7 +52,9 @@ app.get('/blog/:name', (req, res) => {
     const size = new Blob([templated]).size;
     const finalRes = templated.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
 
-    res.send(finalRes);
+    const { hour, minute } = getBinTime();
+    const withClock = finalRes.replace(/{%CLOCK%}/g, `Hour: ${hour}, Minute: ${minute}`)
+    res.send(withClock);
 });
 
 app.get('/projects', async (_req, res) => {
@@ -57,7 +63,9 @@ app.get('/projects', async (_req, res) => {
     const size = new Blob([templated]).size;
     const finalRes = templated.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
 
-    res.send(finalRes);
+    const { hour, minute } = getBinTime();
+    const withClock = finalRes.replace(/{%CLOCK%}/g, `Hour: ${hour}, Minute: ${minute}`)
+    res.send(withClock);
 });
 
 app.get('/contact', async (_req, res) => {
@@ -66,7 +74,9 @@ app.get('/contact', async (_req, res) => {
     const size = new Blob([templated]).size;
     const finalRes = templated.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
 
-    res.send(finalRes);
+    const { hour, minute } = getBinTime();
+    const withClock = finalRes.replace(/{%CLOCK%}/g, `Hour: ${hour}, Minute: ${minute}`)
+    res.send(withClock);
 });
 
 app.get('/feed.rss', async (_req, res) => {
@@ -87,7 +97,7 @@ app.get('/feed.rss', async (_req, res) => {
 });
 
 app.use((_req, res, _next) => {
-    res.status(404).send('rtfm');
+    res.status(404).send('<a href="https://datatracker.ietf.org/doc/html/rfc2549">rtfm</a>');
 })
 
 app.listen(port, () => console.log(`listening at port ${port}`));
