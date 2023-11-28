@@ -79,5 +79,9 @@ app.get('/feed.rss', async (_req, res) => {
     res.send(rss);
 });
 
+app.use((_req, res, _next) => {
+    res.status(404).send('rtfm');
+})
+
 app.listen(port, () => console.log(`listening at port ${port}`));
 
