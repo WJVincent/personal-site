@@ -88,14 +88,17 @@ const prepareHTML = (prefix, route, readFileOpts) => {
 
   if(prefix === ''){
     withStyle = withContent.replace(/{%STYLE%}/g, '');
+  } else if (prefix === 'basic') {
+    const basicStyle = readFile('html', 'basic-style', 'html');
+    withStyle = withContent.replace(/{%STYLE%}/g, basicStyle);
   } else {
-      //TODO: actually add style injection
-      withStyle = withContent;
+    withStyle = withContent;
   }
 
   const size = new Blob([withStyle]).size;
   const withPageSize = withStyle.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
-  const res = withPageSize.replace(/{%ROUTE_PREFIX%}/g, prefix);
+  console.log(prefix)
+  const res = withPageSize.replace(/{%ROUTE_PREFIX%}/g, '/' + prefix);
   return res;
 };
 
