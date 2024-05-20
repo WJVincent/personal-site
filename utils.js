@@ -97,7 +97,6 @@ const prepareHTML = (prefix, route, readFileOpts) => {
 
   const size = new Blob([withStyle]).size;
   const withPageSize = withStyle.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
-  console.log(prefix)
   const res = withPageSize.replace(/{%ROUTE_PREFIX%}/g, '/' + prefix);
   return res;
 };
