@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const showdown = require('showdown'); // markdown -> html convertor
+const showdown = require("showdown"); // markdown -> html convertor
 const convertor = new showdown.Converter();
 
 // code taken from SO, could be broken, test more
@@ -34,14 +34,17 @@ const readFile = (dirName, fileName, type) => {
   );
 };
 
-const getBlogPostNames = () => {
+const getBlogPostNames = (prefix) => {
   const postNames = fs.readdirSync("blog_posts");
 
   const parseFileNames = postNames.map((fileName) => {
     const name = fileName.split(".")[0];
     const [date, title] = name.split("_");
     return {
-      data: `<li><a href="/blog/${date}_${title}">${title}</a> -- ${date}</li>`,
+      data:
+        prefix === "basic"
+          ? `<li><a href="/basic/blog/${date}_${title}">${title}</a> -- ${date}</li>`
+          : `<li><a href="/basic/blog/${date}_${title}">${title}</a> -- ${date}</li>`,
       date,
       fileName,
     };
@@ -59,37 +62,48 @@ const getBlogPostNames = () => {
 };
 
 const prepareHTML = (prefix, route, readFileOpts) => {
-  if(!readFileOpts.dirName) readFileOpts.dirName = 'html';
-  if(!readFileOpts.fileType) readFileOpts.fileType = 'html';
+  if (!readFileOpts.dirName) readFileOpts.dirName = "html";
+  if (!readFileOpts.fileType) readFileOpts.fileType = "html";
 
   const { dirName, fileName, fileType } = readFileOpts;
   const index = readFile("html", "index", "html");
   let template = readFile(dirName, fileName, fileType);
   let withContent;
 
-  if(route === 'blog_post'){
+  if (route === "blog_post") {
     const content = convertor.makeHtml(template);
-    withContent = index.replace(/{%CONTENT%}/g, `<a href="/blog"><- blog-index</a><div>${content}</div>`);
-
+    if (prefix === "basic") {
+      withContent = index.replace(
+        /{%CONTENT%}/g,
+        `<a href="/basic/blog"><- blog-index</a><div>${content}</div>`,
+      );
+    } else {
+      withContent = index.replace(
+        /{%CONTENT%}/g,
+        `<a href="/blog"><- blog-index</a><div>${content}</div>`,
+      );
+    }
   } else {
     withContent = index.replace(/{%CONTENT%}/g, template);
   }
- 
-  let optEdit;
-  if(route === 'blog'){
-    const postData = getBlogPostNames();
-    optEdit = withContent.replace(/{%CONTENT%}/g, postData.map(post=> post[0]).join(''))
-  }
-  
-    
-  if(optEdit) withContent = optEdit;
-  
-  let withStyle; 
 
-  if(prefix === ''){
-    withStyle = withContent.replace(/{%STYLE%}/g, '');
-  } else if (prefix === 'basic') {
-    const basicStyle = readFile('html', 'basic-style', 'html');
+  let optEdit;
+  if (route === "blog") {
+    const postData = getBlogPostNames();
+    optEdit = withContent.replace(
+      /{%CONTENT%}/g,
+      postData.map((post) => post[0]).join(""),
+    );
+  }
+
+  if (optEdit) withContent = optEdit;
+
+  let withStyle;
+
+  if (prefix === "") {
+    withStyle = withContent.replace(/{%STYLE%}/g, "");
+  } else if (prefix === "basic") {
+    const basicStyle = readFile("html", "basic-style", "html");
     withStyle = withContent.replace(/{%STYLE%}/g, basicStyle);
   } else {
     withStyle = withContent;
@@ -97,7 +111,10 @@ const prepareHTML = (prefix, route, readFileOpts) => {
 
   const size = new Blob([withStyle]).size;
   const withPageSize = withStyle.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
-  const res = withPageSize.replace(/{%ROUTE_PREFIX%}/g, prefix ? '/' + prefix : prefix) 
+  const res = withPageSize.replace(
+    /{%ROUTE_PREFIX%}/g,
+    prefix ? "/" + prefix : prefix,
+  );
   return res;
 };
 
