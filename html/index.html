@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="60">
     <title>William Vincent</title>
 </head>
 
@@ -12,15 +11,13 @@
     <header>
         <h1>William Vincent</h1>
         <span>|</span>
-        <span><a href="/">Home</a></span>
+        <span><a href="{%ROUTE_PREFIX%}/">Home</a></span>
         <span>|</span>
-        <span><a href="/blog">Blog</a></span>
+        <span><a href="{%ROUTE_PREFIX%}/blog">Blog</a></span>
         <span>|</span>
-        <span><a href="/projects">Projects</a></span>
+        <span><a href="{%ROUTE_PREFIX%}/projects">Projects</a></span>
         <span>|</span>
-        <span><a href="/contact">Contact</a></span>
-        <span>|</span>
-        <span><a href="/feed.rss">RSS Feed</a></span>
+        <span><a href="{%ROUTE_PREFIX%}/contact">Contact</a></span>
         <span>|</span>
     </header>
     <hr />
@@ -32,7 +29,6 @@
         <span>Free and Open Source,</span>
         <a href="https://github.com/WJVincent/personal-site/tree/main" target="_blank">repo</a>
         <p>Page Size: {%PAGE_SIZE%}</p>
-        {%CLOCK%}
     </footer>
 </body>
 
