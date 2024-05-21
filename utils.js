@@ -2,6 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const showdown = require("showdown"); // markdown -> html convertor
 const convertor = new showdown.Converter();
+const pTagNoStyle = "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, it doesn't have any CSS, there is no unnecessary bloat."
+const pTagBasicStyle = "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, <s>it doesn't have any CSS</s>, there is no unnecessary bloat."
 
 // code taken from SO, could be broken, test more
 const convertBytes = (x) => {
@@ -85,6 +87,11 @@ const prepareHTML = (prefix, route, readFileOpts) => {
     }
   } else {
     withContent = index.replace(/{%CONTENT%}/g, template);
+    if(prefix === 'basic'){
+      withContent = withContent.replace(/{%PTAG%}/g, pTagBasicStyle);
+    } else {
+      withContent = withContent.replace(/{%PTAG%}/g, pTagNoStyle);
+    }
   }
 
   let optEdit;
