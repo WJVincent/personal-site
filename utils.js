@@ -2,8 +2,10 @@ const fs = require("fs");
 const path = require("path");
 const showdown = require("showdown"); // markdown -> html convertor
 const convertor = new showdown.Converter();
-const pTagNoStyle = "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, it doesn't have any CSS, there is no unnecessary bloat."
-const pTagBasicStyle = "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, <s>it doesn't have any CSS</s>, there is no unnecessary bloat."
+const pTagNoStyle =
+  "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, it doesn't have any CSS, there is no unnecessary bloat.";
+const pTagBasicStyle =
+  "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, <s>it doesn't have any CSS</s>, there is no unnecessary bloat.";
 
 // code taken from SO, could be broken, test more
 const convertBytes = (x) => {
@@ -45,8 +47,8 @@ const getBlogPostNames = (prefix) => {
     return {
       data:
         prefix === "basic"
-          ? `<li><a href="/basic/blog/${date}_${title}">${title}</a> -- ${date}</li>`
-          : `<li><a href="/basic/blog/${date}_${title}">${title}</a> -- ${date}</li>`,
+          ? `<li><a href="/basic/blog/${date}_${title}">${title.split("-").join(" ")}</a> -- ${date}</li>`
+          : `<li><a href="/blog/${date}_${title}">${title.split("-").join(" ")}</a> -- ${date}</li>`,
       date,
       fileName,
     };
@@ -63,66 +65,80 @@ const getBlogPostNames = (prefix) => {
   return html;
 };
 
+const blogPostHTML = (indexHtml, templateStr, prefix) => {
+  const content = convertor.makeHtml(templateStr);
+
+  if (prefix === "basic") {
+    return indexHtml.replace(
+      /{%CONTENT%}/g,
+      `<a href="/basic/blog"><- blog-index</a><div>${content}</div>`,
+    );
+  }
+
+  return indexHtml.replace(
+    /{%CONTENT%}/g,
+    `<a href="/blog"><- blog-index</a><div>${content}</div>`,
+  );
+};
+
+const normalPageHTML = (indexHtml, templateStr, prefix) => {
+  let withContent = indexHtml.replace(/{%CONTENT%}/g, templateStr);
+
+  if (prefix === "basic") {
+    return withContent.replace(/{%PTAG%}/g, pTagBasicStyle);
+  }
+
+  return withContent.replace(/{%PTAG%}/g, pTagNoStyle);
+};
+
+const blogIndexHTML = (prefix, templateStr) => {
+  const postData = getBlogPostNames(prefix);
+  return templateStr.replace(
+    /{%CONTENT%}/g,
+    postData.map((post) => post[0]).join(""),
+  );
+};
+
+const injectContent = (indexStr, templateStr, route, prefix) => {
+  const content =
+    route === "blog_post"
+      ? blogPostHTML(indexStr, templateStr, prefix)
+      : normalPageHTML(indexStr, templateStr, prefix);
+
+  if (route === "blog") return blogIndexHTML(prefix, content);
+  return content;
+};
+
+const injectStyle = (templateStr, prefix) => {
+  if (prefix === "") {
+    return templateStr.replace(/{%STYLE%}/g, "");
+  } else if (prefix === "basic") {
+    const basicStyle = readFile("html", "basic-style", "html");
+    return templateStr.replace(/{%STYLE%}/g, basicStyle);
+  } else {
+    return templateStr;
+  }
+};
+
 const prepareHTML = (prefix, route, readFileOpts) => {
   if (!readFileOpts.dirName) readFileOpts.dirName = "html";
   if (!readFileOpts.fileType) readFileOpts.fileType = "html";
 
   const { dirName, fileName, fileType } = readFileOpts;
+
   const index = readFile("html", "index", "html");
-  let template = readFile(dirName, fileName, fileType);
-  let withContent;
+  const template = readFile(dirName, fileName, fileType);
 
-  if (route === "blog_post") {
-    const content = convertor.makeHtml(template);
-    if (prefix === "basic") {
-      withContent = index.replace(
-        /{%CONTENT%}/g,
-        `<a href="/basic/blog"><- blog-index</a><div>${content}</div>`,
-      );
-    } else {
-      withContent = index.replace(
-        /{%CONTENT%}/g,
-        `<a href="/blog"><- blog-index</a><div>${content}</div>`,
-      );
-    }
-  } else {
-    withContent = index.replace(/{%CONTENT%}/g, template);
-    if(prefix === 'basic'){
-      withContent = withContent.replace(/{%PTAG%}/g, pTagBasicStyle);
-    } else {
-      withContent = withContent.replace(/{%PTAG%}/g, pTagNoStyle);
-    }
-  }
-
-  let optEdit;
-  if (route === "blog") {
-    const postData = getBlogPostNames();
-    optEdit = withContent.replace(
-      /{%CONTENT%}/g,
-      postData.map((post) => post[0]).join(""),
-    );
-  }
-
-  if (optEdit) withContent = optEdit;
-
-  let withStyle;
-
-  if (prefix === "") {
-    withStyle = withContent.replace(/{%STYLE%}/g, "");
-  } else if (prefix === "basic") {
-    const basicStyle = readFile("html", "basic-style", "html");
-    withStyle = withContent.replace(/{%STYLE%}/g, basicStyle);
-  } else {
-    withStyle = withContent;
-  }
+  const withContent = injectContent(index, template, route, prefix);
+  const withStyle = injectStyle(withContent, prefix);
 
   const size = new Blob([withStyle]).size;
   const withPageSize = withStyle.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
-  const res = withPageSize.replace(
+
+  return withPageSize.replace(
     /{%ROUTE_PREFIX%}/g,
     prefix ? "/" + prefix : prefix,
   );
-  return res;
 };
 
 module.exports = {
