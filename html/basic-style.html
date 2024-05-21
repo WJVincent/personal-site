@@ -1,102 +1,95 @@
 <style>
-    html {
-        background-color: #282828;
-        color: white;
-        font: 1.3em monospace;
+  html {
+    background-color: #282828;
+    color: white;
+    font: 1.3em monospace;
+  }
+
+  body {
+    margin: 5%;
+  }
+
+  body > header > h1 {
+    color: #458588;
+    text-align: center;
+    margin: 3%;
+    font-size: 3em;
+  }
+
+  body > header > div {
+    display: flex;
+    justify-content: center;
+  }
+
+  footer > .link-list {
+    display: flex;
+    justify-content: center;
+  }
+
+  .link {
+    text-align: center;
+    flex-grow: 1;
+  }
+
+  .link:hover {
+    background-color: #689d6a;
+    color: #282828;
+  }
+
+  a {
+    color: #689d6a;
+    text-decoration: none;
+  }
+
+  body > div > h2 {
+    color: #689d6a;
+  }
+
+  p {
+    line-height: 1.8em;
+  }
+
+  td {
+    padding: 0.5em;
+    text-align: center;
+  }
+
+
+  @media screen and (max-width: 950px) {
+    body > header > div {
+      flex-direction: column;
+      align-items: center;
+      color: #689d6a;
+      margin: auto;
+      width: 90%;
     }
 
-    body {
-        margin: 5%;
-    }
-
-    body>header>h1 {
-        color: #458588;
-        text-align: center;
-        margin: 3%;
-        font-size: 3em;
-    }
-
-    body>header>div {
-        display: flex;
-        justify-content: center;
+    hr {
+        width: 92%;
     }
 
     .link {
-        width: 10%;
+      color: #282828;
+      background-color: #689d6a;
+      width: 100%;
+      margin: 0.3em 0;
+      padding: 0.5em;
+    }
+
+    .sep {
+      display: none;
+    }
+
+    footer > .link-list{
+      flex-direction: column;
+      align-items: center;
+      color: #689d6a;
+      margin: auto;
+      width: 90%;
+    }
+
+    .misc {
         text-align: center;
     }
-
-    .link:hover {
-        background-color: #689d6a;
-        color: #282828;
-    }
-
-    a {
-        color: #689d6a;
-        text-decoration: none;
-    }
-
-    body>div>h2 {
-        color: #689d6a;
-    }
-
-    a>button {
-        background-color: #689d6a;
-        padding: 0.5em;
-        font-size: 0.7em;
-        font-weight: bold;
-        border: 1px solid #282828;
-    }
-
-    a>button:hover {
-        cursor: pointer;
-        background-color: #282828;
-        color: #689d6a;
-        border: 1px solid #689d6a;
-    }
-
-    footer>a {
-        color: #282828;
-    }
-
-    p {
-        line-height: 1.8em;
-    }
-
-    td {
-        padding: 0.5em;
-        text-align: center;
-    }
-
-    @media screen and (max-width: 950px) {
-        body>header>div {
-            flex-direction: column;
-            color: #689d6a;
-        }
-
-        .link {
-            color: #282828;
-            background-color: #689d6a;
-            width: 100%;
-            margin: 0.3em 0;
-            padding: 0.5em;
-        }
-
-        .sep {
-            display: none;
-        }
-
-        footer>div {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
-
-        footer>div>a {
-            width: 100%;
-        }
-        footer>div>a>button {
-            width: 100%;
-        }
-    }
+  }
 </style>
