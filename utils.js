@@ -72,13 +72,13 @@ const blogPostHTML = (indexHtml, templateStr, prefix) => {
   if (prefix === "basic") {
     return indexHtml.replace(
       /{%CONTENT%}/g,
-      `<a href="/basic/blog"><- blog-index</a><div>${content}</div>`,
+      `<a href="/basic/blog">&lt;- blog-index</a><div>${content}</div>`,
     );
   }
 
   return indexHtml.replace(
     /{%CONTENT%}/g,
-    `<a href="/blog"><- blog-index</a><div>${content}</div>`,
+    `<a href="/blog">&lt;- blog-index</a><div>${content}</div>`,
   );
 };
 
