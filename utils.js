@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const showdown = require("showdown"); // markdown -> html convertor
-const { minify } = require('html-minifier');
+const { minify } = require("html-minifier");
 const convertor = new showdown.Converter();
 const pTagNoStyle =
   "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, it doesn't have any CSS, there is no unnecessary bloat.";
@@ -92,6 +92,17 @@ const normalPageHTML = (indexHtml, templateStr, prefix) => {
   return withContent.replace(/{%PTAG%}/g, pTagNoStyle);
 };
 
+const projectIndexHTML = (prefix, content) => {
+  const projectFiles = fs.readdirSync("projects");
+
+  const projectContent = projectFiles.map(fileName => {
+    const fileContent = fs.readFileSync('projects/' + fileName, 'utf8');
+    return fileContent;
+  });
+
+  return content.replace(/{%CONTENT%}/, projectContent.join(''));
+}
+
 const blogIndexHTML = (prefix, templateStr) => {
   const postData = getBlogPostNames(prefix);
   return templateStr.replace(
@@ -107,6 +118,7 @@ const injectContent = (indexStr, templateStr, route, prefix) => {
       : normalPageHTML(indexStr, templateStr, prefix);
 
   if (route === "blog") return blogIndexHTML(prefix, content);
+  if (route === "projects") return projectIndexHTML(prefix, content);
   return content;
 };
 
@@ -133,7 +145,6 @@ const prepareHTML = (prefix, route, readFileOpts) => {
   const withContent = injectContent(index, template, route, prefix);
   const withStyle = injectStyle(withContent, prefix);
 
-
   const res = withStyle.replace(
     /{%ROUTE_PREFIX%}/g,
     prefix ? "/" + prefix : prefix,
@@ -144,7 +155,7 @@ const prepareHTML = (prefix, route, readFileOpts) => {
     useShortDoctype: true,
     removeEmptyAttributes: true,
     removeOptionalTags: true,
-  })
+  });
 
   const size = new Blob([minRes]).size;
   const withPageSize = minRes.replace(/{%PAGE_SIZE%}/g, convertBytes(size));
