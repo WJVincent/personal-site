@@ -1,0 +1,107 @@
+<div id="terminal"></div>
+<form id="terminal-input-form" autocomplete="off">
+  <input id="terminal-input" placeholder="'> help' for help" value=">" />
+</form>
+<script>
+  const commandsRun = [];
+  let curPos;
+  document.addEventListener("DOMContentLoaded", () => {
+    const terminal = document.getElementById("terminal");
+    const input = document.getElementById("terminal-input");
+    const form = document.getElementById("terminal-input-form");
+
+    function getCommands(e) {
+      if (!commandsRun.length) {
+        return;
+      }
+      if (e.keyCode === 38) {
+        curPos = curPos ? curPos - 1 : commandsRun.length - 1;
+        e.target.value = commandsRun[curPos];
+        console.log(e.target.value);
+      }
+      if (e.keyCode === 40) {
+        if (curPos === undefined) {
+          curPos = 0;
+        }
+        curPos = curPos < commandsRun.length - 1 ? curPos + 1 : 0;
+        e.target.value = commandsRun[curPos];
+      }
+    }
+
+    function loadResponse(content) {
+      for (let i = 0; i < content.length; i++) {
+        const text = content[i];
+        const newField = document.createElement("p");
+        newField.innerText = text;
+        terminal.insertBefore(newField, terminal.firstChild);
+      }
+    }
+
+    function handleCommand(command) {
+      const commands = {
+        // add commands by adding the command as the key starting with '>' and the value being the response in the terminal
+        ">help": [
+          "help - display list of commands",
+          "about-this - display info about this website",
+          "about-me - display info about William J Vincent",
+          "skills - display a list of skills",
+        ], //edit this to add help support for a commands that are added
+        ">about-this": [
+          "This is a website.",
+          "It is simple because it doesn't need to be complicated. ",
+          "It is small because it doesn't need to be large.",
+          "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, it doesn't have any CSS, there is no unnecessary bloat.",
+        ],
+        ">about-me": [
+          "I am a human person.",
+          "I like to write code, talk about free software, evangelize the powers of vim, and rant about the modern internet.",
+          "I want to solve real problems that effect real people. I believe software is a powerful tool to improve the lives of those around us and I want to invest my time in projects seeking to leverage that power.",
+          "Software Engineering also allows for a unique form of self-expression. Taking time to build useless projects and just enjoy the art of making things is at the core of why programming is awesome.",
+        ],
+        ">skills": [
+          "Linux",
+          "JavaScript",
+          "Bash",
+          "SQL",
+          "SQLite",
+          "PostgreSQL",
+          "HTML",
+          "CSS",
+          "Git",
+          "Python",
+          "Node",
+          "Express",
+          "React",
+          "Redux",
+        ],
+      };
+      const res = commands[command]
+        ? commands[command]
+        : [
+            `Command '${command.slice(
+              1
+            )}' not found. Use command "help" for a list of commands`,
+          ];
+
+      commandsRun.push(command);
+      loadResponse(res);
+    }
+
+    const help = document.createElement("p");
+    help.innerText = 'For a list of commands, type "help"';
+    terminal.appendChild(help);
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      handleCommand(input.value);
+      input.value = ">";
+    });
+
+    input.addEventListener("keydown", getCommands);
+    input.addEventListener("keypress", getCommands);
+    input.addEventListener("input", (e) => {
+      if (!e.target.value) {
+        e.target.value = ">";
+      }
+    });
+  });
+</script>

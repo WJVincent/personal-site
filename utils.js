@@ -35,7 +35,7 @@ const convertBytes = (x) => {
 const readFile = (dirName, fileName, type) => {
   return fs.readFileSync(
     path.join(__dirname, `/${dirName}/${fileName}.${type}`),
-    "utf-8",
+    "utf-8"
   );
 };
 
@@ -48,8 +48,12 @@ const getBlogPostNames = (prefix) => {
     return {
       data:
         prefix === "basic"
-          ? `<li><a href="/basic/blog/${date}_${title}">${title.split("-").join(" ")}</a> -- ${date}</li>`
-          : `<li><a href="/blog/${date}_${title}">${title.split("-").join(" ")}</a> -- ${date}</li>`,
+          ? `<li><a href="/basic/blog/${date}_${title}">${title
+              .split("-")
+              .join(" ")}</a> -- ${date}</li>`
+          : `<li><a href="/blog/${date}_${title}">${title
+              .split("-")
+              .join(" ")}</a> -- ${date}</li>`,
       date,
       fileName,
     };
@@ -72,13 +76,13 @@ const blogPostHTML = (indexHtml, templateStr, prefix) => {
   if (prefix === "basic") {
     return indexHtml.replace(
       /{%CONTENT%}/g,
-      `<a href="/basic/blog">&lt;- blog-index</a><div>${content}</div>`,
+      `<a href="/basic/blog">&lt;- blog-index</a><div>${content}</div>`
     );
   }
 
   return indexHtml.replace(
     /{%CONTENT%}/g,
-    `<a href="/blog">&lt;- blog-index</a><div>${content}</div>`,
+    `<a href="/blog">&lt;- blog-index</a><div>${content}</div>`
   );
 };
 
@@ -95,19 +99,19 @@ const normalPageHTML = (indexHtml, templateStr, prefix) => {
 const projectIndexHTML = (prefix, content) => {
   const projectFiles = fs.readdirSync("projects");
 
-  const projectContent = projectFiles.map(fileName => {
-    const fileContent = fs.readFileSync('projects/' + fileName, 'utf8');
+  const projectContent = projectFiles.map((fileName) => {
+    const fileContent = fs.readFileSync("projects/" + fileName, "utf8");
     return fileContent;
   });
 
-  return content.replace(/{%CONTENT%}/, projectContent.join(''));
-}
+  return content.replace(/{%CONTENT%}/, projectContent.join(""));
+};
 
 const blogIndexHTML = (prefix, templateStr) => {
   const postData = getBlogPostNames(prefix);
   return templateStr.replace(
     /{%CONTENT%}/g,
-    postData.map((post) => post[0]).join(""),
+    postData.map((post) => post[0]).join("")
   );
 };
 
@@ -128,6 +132,9 @@ const injectStyle = (templateStr, prefix) => {
   } else if (prefix === "basic") {
     const basicStyle = readFile("html", "basic-style", "html");
     return templateStr.replace(/{%STYLE%}/g, basicStyle);
+  } else if (prefix === "terminal") {
+    const terminalStyle = readFile("html", "terminal-style", "html");
+    return templateStr.replace(/{%STYLE%}/g, terminalStyle);
   } else {
     return templateStr;
   }
@@ -147,7 +154,7 @@ const prepareHTML = (prefix, route, readFileOpts) => {
 
   const res = withStyle.replace(
     /{%ROUTE_PREFIX%}/g,
-    prefix ? "/" + prefix : prefix,
+    prefix && prefix !== "terminal" ? "/" + prefix : ""
   );
 
   const minRes = minify(res, {
