@@ -63,6 +63,7 @@ const readFile = (dirName, fileName, type) => {
 };
 
 const formatSearchResults = (prefix, data) => {
+  if(Object.keys(data).length === 0) return '<p>No Results :(';
   let ulOut = "<ul>";
   for (let fileName in data) {
     const name = fileName.split(".")[0];
