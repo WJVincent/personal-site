@@ -1,5 +1,10 @@
 <div>
     <i>Posts in Reverse Chronological Order</i>
+    <form method="post" action="/search">
+        <label for="full-text">Search Post Text</label>
+        <input type="search" name="full-text" />
+        <button type="submit">Search!</button>
+    </form>
     <ul>
         {%CONTENT%}
     </ul>
