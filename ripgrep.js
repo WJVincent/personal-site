@@ -1,3 +1,9 @@
+/*
+Code taken from ripgrep-js https://github.com/alexlafroscia/ripgrep-js
+
+Modified to fix bugs
+*/
+
 const { exec } = require('child_process');
 
 function formatResults(stdout) {
