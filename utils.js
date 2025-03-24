@@ -8,6 +8,27 @@ const pTagNoStyle =
 const pTagBasicStyle =
   "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, <s>it doesn't have any CSS</s>, there is no unnecessary bloat.";
 
+const parseRgOutput = (outputArr) => {
+  const paths = outputArr.reduce((out, el) => {
+    // remove dir and date prefix and .md suffix
+    const pathArr = el.path.text.split('/');
+    const path = pathArr[pathArr.length - 1].slice(0, -3);
+    const lineText = el.lines.text;
+    const lineNumber = el.line_number;
+    const lineInfo = { lineNumber, lineText };
+
+    if (out[path] === undefined) {
+      out[path] = [lineInfo];
+    } else {
+      out[path].push(lineInfo);
+    }
+
+    return out;
+  }, {})
+
+  return paths;
+};
+
 // code taken from SO, could be broken, test more
 const convertBytes = (x) => {
   const units = [
@@ -37,6 +58,38 @@ const readFile = (dirName, fileName, type) => {
     path.join(__dirname, `/${dirName}/${fileName}.${type}`),
     "utf-8",
   );
+};
+
+const formatSearchResults = (prefix, data) => {
+  let ulOut = "<ul>";
+  for (let fileName in data) {
+    const name = fileName.split(".")[0];
+    const [date, title] = name.split("_");
+    let li = '<li>'
+    const postName = prefix === "basic"
+      ? `<p><a href="/basic/blog/${date}_${title}">${title.split("-").join(" ")}</a> -- ${date}</p>`
+      : `<p><a href="/blog/${date}_${title}">${title.split("-").join(" ")}</a> -- ${date}</p>`;
+    li += postName;
+    li += '<ul>';
+    const lines = data[fileName].reduce((arr, el) => {
+      let innerLi = '<li>'
+
+      innerLi += `${el.lineNumber} : "${el.lineText}"`
+
+      innerLi += '</li>'
+
+      arr.push(innerLi);
+
+      return arr;
+    }, [])
+
+    li += lines.join(' ');
+    li += '</ul>';
+    li += '</li>';
+
+    ulOut += li;
+  };
+  return ulOut;
 };
 
 const getBlogPostNames = (prefix) => {
@@ -111,14 +164,26 @@ const blogIndexHTML = (prefix, templateStr) => {
   );
 };
 
-const injectContent = (indexStr, templateStr, route, prefix) => {
-  const content =
-    route === "blog_post"
-      ? blogPostHTML(indexStr, templateStr, prefix)
-      : normalPageHTML(indexStr, templateStr, prefix);
+const searchIndexHTML = (prefix, content, templateStr, indexStr, pattern) => {
+  const searchHTML = templateStr.replace(/{%CONTENT%}/, content);
+  let withContent = indexStr.replace(/{%CONTENT%}/g, searchHTML);
+  let withSearchTerm = withContent.replace(/{%SEARCH_TERM%}/, `"${pattern}"`);
+  return withSearchTerm;
+};
+
+const injectContent = (indexStr, templateStr, route, prefix, data, pattern) => {
+  let content;
+  if (route === "blog_post") {
+    content = blogPostHTML(indexStr, templateStr, prefix)
+  } else if (route === "search") {
+    content = formatSearchResults(prefix, parseRgOutput(data));
+  } else {
+    content = normalPageHTML(indexStr, templateStr, prefix);
+  }
 
   if (route === "blog") return blogIndexHTML(prefix, content);
   if (route === "projects") return projectIndexHTML(prefix, content);
+  if (route === "search") return searchIndexHTML(prefix, content, templateStr, indexStr, pattern);
   return content;
 };
 
@@ -137,12 +202,12 @@ const prepareHTML = (prefix, route, readFileOpts) => {
   if (!readFileOpts.dirName) readFileOpts.dirName = "html";
   if (!readFileOpts.fileType) readFileOpts.fileType = "html";
 
-  const { dirName, fileName, fileType } = readFileOpts;
+  const { dirName, fileName, fileType, data, pattern } = readFileOpts;
 
   const index = readFile("html", "index", "html");
   const template = readFile(dirName, fileName, fileType);
 
-  const withContent = injectContent(index, template, route, prefix);
+  const withContent = injectContent(index, template, route, prefix, data, pattern);
   const withStyle = injectStyle(withContent, prefix);
 
   const res = withStyle.replace(
@@ -167,4 +232,6 @@ module.exports = {
   getBlogPostNames,
   convertBytes,
   prepareHTML,
+  parseRgOutput,
+  formatSearchResults
 };
