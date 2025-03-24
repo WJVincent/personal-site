@@ -2,7 +2,9 @@ const fs = require("fs");
 const path = require("path");
 const showdown = require("showdown"); // markdown -> html convertor
 const { minify } = require("html-minifier");
+const { ripGrep: rg } = require('./ripgrep.js');
 const convertor = new showdown.Converter();
+
 const pTagNoStyle =
   "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, it doesn't have any CSS, there is no unnecessary bloat.";
 const pTagBasicStyle =
@@ -198,17 +200,23 @@ const injectStyle = (templateStr, prefix) => {
   }
 };
 
-const prepareHTML = (prefix, route, readFileOpts) => {
+const prepareHTML = async (prefix, route, readFileOpts) => {
   if (!readFileOpts.dirName) readFileOpts.dirName = "html";
   if (!readFileOpts.fileType) readFileOpts.fileType = "html";
 
-  const { dirName, fileName, fileType, data, pattern } = readFileOpts;
+  const { dirName, fileName, fileType, pattern } = readFileOpts;
+
+  let data;
+  if (pattern){
+    data = await rg(path.join(__dirname, "blog_posts"), pattern);
+  }
 
   const index = readFile("html", "index", "html");
   const template = readFile(dirName, fileName, fileType);
 
   const withContent = injectContent(index, template, route, prefix, data, pattern);
   const withStyle = injectStyle(withContent, prefix);
+
 
   const res = withStyle.replace(
     /{%ROUTE_PREFIX%}/g,

@@ -1,10 +1,8 @@
 const express = require('express');
-const path = require('path');
 const bodyParser = require('body-parser');
-const { ripGrep: rg } = require('./ripgrep.js');
-
+const path = require("path");
 const routes = require('./routes');
-const { prepareHTML, parseRgOutput, formatSearchResults } = require('./utils.js');
+const { prepareHTML } = require('./utils.js');
 
 const port = process.env.PORT || 5000;
 
@@ -15,7 +13,7 @@ app.use(routes);
 app.use('/resume', express.static(path.join(__dirname, 'vincent_william_resume.pdf')));
 
 app.get('/', async (_req, res) => {
-  const home = prepareHTML('', 'home', { fileName: 'home' });
+  const home = await prepareHTML('', 'home', { fileName: 'home' });
   res.send(home);
 });
 
@@ -26,33 +24,31 @@ app.get('/42', (_req, res) => {
     is...</h1>`);
 });
 
-app.get('/blog', (_req, res) => {
-  const blog = prepareHTML('', 'blog', { fileName: 'blog' });
+app.get('/blog', async (_req, res) => {
+  const blog = await prepareHTML('', 'blog', { fileName: 'blog' });
   res.send(blog);
 });
 
-app.get('/blog/:name', (req, res) => {
+app.get('/blog/:name', async (req, res) => {
   const { name } = req.params;
-  const blog = prepareHTML('', 'blog_post', { dirName: 'blog_posts', fileName: name, fileType: 'md' });
+  const blog = await prepareHTML('', 'blog_post', { dirName: 'blog_posts', fileName: name, fileType: 'md' });
   res.send(blog);
 });
 
 app.get('/projects', async (_req, res) => {
-  const projects = prepareHTML('', 'projects', { fileName: 'projects' });
+  const projects = await prepareHTML('', 'projects', { fileName: 'projects' });
   res.send(projects)
 });
 
 app.get('/contact', async (_req, res) => {
-  const contact = prepareHTML('', 'contact', { fileName: 'contact' });
+  const contact = await prepareHTML('', 'contact', { fileName: 'contact' });
   res.send(contact);
 });
 
 app.post('/search', async (req, res) => {
   const pattern = req.body["full-text"];
 
-  const output = await rg(path.join(__dirname, "blog_posts"), pattern);
-
-  const searchPage = prepareHTML('', 'search', { fileName: 'search', data: output, pattern })
+  const searchPage = await prepareHTML('', 'search', { fileName: 'search', pattern })
 
   res.send(searchPage);
 })

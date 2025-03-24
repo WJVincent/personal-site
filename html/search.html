@@ -1,6 +1,6 @@
 <div>
     <i>Search results for query: {%SEARCH_TERM%}</i>
-    <form method="post" action="/search">
+    <form method="post" action="{%ROUTE_PREFIX%}/search">
         <label for="full-text">Search Post Text</label>
         <input type="search" name="full-text" />
         <button type="submit">Search!</button>
