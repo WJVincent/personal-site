@@ -3,7 +3,6 @@ const {prepareHTML } = require('../utils');
 
 router.get('/', async (_req, res) => {
     const home = await prepareHTML('basic', 'home', {fileName: 'home'});
-    console.log(home)
     res.send(home);
 });
 
