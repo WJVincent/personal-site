@@ -56,14 +56,18 @@ const convertBytes = (x) => {
 };
 
 const readFile = (dirName, fileName, type) => {
-  return fs.readFileSync(
-    path.join(__dirname, `/${dirName}/${fileName}.${type}`),
-    "utf-8",
-  );
+  try {
+    return fs.readFileSync(
+      path.join(__dirname, `/${dirName}/${fileName}.${type}`),
+      "utf-8",
+    );
+  } catch {
+    return "<p>What are you even doing man, this file definitely doesn't exist and isn't linked anywhere lol</p>"
+  }
 };
 
 const formatSearchResults = (prefix, data) => {
-  if(Object.keys(data).length === 0) return '<p>No Results :(';
+  if (Object.keys(data).length === 0) return '<p>No Results :(';
   let ulOut = "<ul>";
   for (let fileName in data) {
     const name = fileName.split(".")[0];
@@ -208,7 +212,7 @@ const prepareHTML = async (prefix, route, readFileOpts) => {
   const { dirName, fileName, fileType, pattern } = readFileOpts;
 
   let data;
-  if (pattern){
+  if (pattern) {
     data = await rg(path.join(__dirname, "blog_posts"), pattern);
   }
 
