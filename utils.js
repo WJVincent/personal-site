@@ -3,7 +3,7 @@ const path = require("path");
 const showdown = require("showdown"); // markdown -> html convertor
 const { minify } = require("html-minifier");
 const { ripGrep: rg } = require("./ripgrep.js");
-const convertor = new showdown.Converter();
+const convertor = new showdown.Converter({tables: true});
 
 const pTagNoStyle =
   "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, it doesn't have any CSS, there is no unnecessary bloat.";
