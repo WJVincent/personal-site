@@ -11,6 +11,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(routes);
 app.use('/resume', express.static(path.join(__dirname, 'vincent_william_resume.pdf')));
+app.use('/favicon.ico', express.static(path.join(__dirname, '/images/favicon.ico')));
 
 app.get('/', async (_req, res) => {
   const home = await prepareHTML('', 'home', { fileName: 'home' });
