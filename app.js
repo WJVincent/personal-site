@@ -58,12 +58,10 @@ app.get("/contact", async (_req, res) => {
 
 app.post("/search", async (req, res) => {
   const pattern = req.body["full-text"];
-
   const searchPage = await prepareHTML("", "search", {
     fileName: "search",
     pattern,
   });
-
   res.send(searchPage);
 });
 
