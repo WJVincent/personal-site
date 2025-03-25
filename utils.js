@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const showdown = require("showdown"); // markdown -> html convertor
 const { minify } = require("html-minifier");
-const { ripGrep: rg } = require('./ripgrep.js');
+const { ripGrep: rg } = require("./ripgrep.js");
 const convertor = new showdown.Converter();
 
 const pTagNoStyle =
@@ -10,10 +10,10 @@ const pTagNoStyle =
 const pTagBasicStyle =
   "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, <s>it doesn't have any CSS</s>, there is no unnecessary bloat.";
 
-const parseRgOutput = (outputArr=[]) => {
+const parseRgOutput = (outputArr = []) => {
   const paths = outputArr.reduce((out, el) => {
     // remove dir and date prefix and .md suffix
-    const pathArr = el.path.text.split('/');
+    const pathArr = el.path.text.split("/");
     const path = pathArr[pathArr.length - 1].slice(0, -3);
     const lineText = el.lines.text;
     const lineNumber = el.line_number;
@@ -26,7 +26,7 @@ const parseRgOutput = (outputArr=[]) => {
     }
 
     return out;
-  }, {})
+  }, {});
 
   return paths;
 };
@@ -62,40 +62,41 @@ const readFile = (dirName, fileName, type) => {
       "utf-8",
     );
   } catch {
-    return "<p>What are you even doing man, this file definitely doesn't exist and isn't linked anywhere lol</p>"
+    return "<p>What are you even doing man, this file definitely doesn't exist and isn't linked anywhere lol</p>";
   }
 };
 
 const formatSearchResults = (prefix, data) => {
-  if (Object.keys(data).length === 0) return '<p>No Results :(';
+  if (Object.keys(data).length === 0) return "<p>No Results :(";
   let ulOut = "<ul>";
   for (let fileName in data) {
     const name = fileName.split(".")[0];
     const [date, title] = name.split("_");
-    let li = '<li>'
-    const postName = prefix === "basic"
-      ? `<p><a href="/basic/blog/${date}_${title}">${title.split("-").join(" ")}</a> -- ${date}</p>`
-      : `<p><a href="/blog/${date}_${title}">${title.split("-").join(" ")}</a> -- ${date}</p>`;
+    let li = "<li>";
+    const postName =
+      prefix === "basic"
+        ? `<p><a href="/basic/blog/${date}_${title}">${title.split("-").join(" ")}</a> -- ${date}</p>`
+        : `<p><a href="/blog/${date}_${title}">${title.split("-").join(" ")}</a> -- ${date}</p>`;
     li += postName;
-    li += '<ul>';
+    li += "<ul>";
     const lines = data[fileName].reduce((arr, el) => {
-      let innerLi = '<li>'
+      let innerLi = "<li>";
 
-      innerLi += `${el.lineNumber} : "${el.lineText}"`
+      innerLi += `${el.lineNumber} : "${el.lineText}"`;
 
-      innerLi += '</li>'
+      innerLi += "</li>";
 
       arr.push(innerLi);
 
       return arr;
-    }, [])
+    }, []);
 
-    li += lines.join(' ');
-    li += '</ul>';
-    li += '</li>';
+    li += lines.join(" ");
+    li += "</ul>";
+    li += "</li>";
 
     ulOut += li;
-  };
+  }
   return ulOut;
 };
 
@@ -155,13 +156,13 @@ const normalPageHTML = (indexHtml, templateStr, prefix) => {
 const projectIndexHTML = (prefix, content) => {
   const projectFiles = fs.readdirSync("projects");
 
-  const projectContent = projectFiles.map(fileName => {
-    const fileContent = fs.readFileSync('projects/' + fileName, 'utf8');
+  const projectContent = projectFiles.map((fileName) => {
+    const fileContent = fs.readFileSync("projects/" + fileName, "utf8");
     return fileContent;
   });
 
-  return content.replace(/{%CONTENT%}/, projectContent.join(''));
-}
+  return content.replace(/{%CONTENT%}/, projectContent.join(""));
+};
 
 const blogIndexHTML = (prefix, templateStr) => {
   const postData = getBlogPostNames(prefix);
@@ -181,7 +182,7 @@ const searchIndexHTML = (prefix, content, templateStr, indexStr, pattern) => {
 const injectContent = (indexStr, templateStr, route, prefix, data, pattern) => {
   let content;
   if (route === "blog_post") {
-    content = blogPostHTML(indexStr, templateStr, prefix)
+    content = blogPostHTML(indexStr, templateStr, prefix);
   } else if (route === "search") {
     content = formatSearchResults(prefix, parseRgOutput(data));
   } else {
@@ -190,7 +191,8 @@ const injectContent = (indexStr, templateStr, route, prefix, data, pattern) => {
 
   if (route === "blog") return blogIndexHTML(prefix, content);
   if (route === "projects") return projectIndexHTML(prefix, content);
-  if (route === "search") return searchIndexHTML(prefix, content, templateStr, indexStr, pattern);
+  if (route === "search")
+    return searchIndexHTML(prefix, content, templateStr, indexStr, pattern);
   return content;
 };
 
@@ -219,9 +221,15 @@ const prepareHTML = async (prefix, route, readFileOpts) => {
   const index = readFile("html", "index", "html");
   const template = readFile(dirName, fileName, fileType);
 
-  const withContent = injectContent(index, template, route, prefix, data, pattern);
+  const withContent = injectContent(
+    index,
+    template,
+    route,
+    prefix,
+    data,
+    pattern,
+  );
   const withStyle = injectStyle(withContent, prefix);
-
 
   const res = withStyle.replace(
     /{%ROUTE_PREFIX%}/g,
@@ -246,5 +254,5 @@ module.exports = {
   convertBytes,
   prepareHTML,
   parseRgOutput,
-  formatSearchResults
+  formatSearchResults,
 };
