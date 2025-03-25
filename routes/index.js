@@ -1,6 +1,6 @@
-const router = require('express').Router();
-const withColorsRouter = require('./withColors');
+const router = require("express").Router();
+const withColorsRouter = require("./withColors");
 
-router.use('/basic', withColorsRouter);
+router.use("/basic", withColorsRouter);
 
 module.exports = router;

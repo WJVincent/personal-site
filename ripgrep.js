@@ -4,7 +4,7 @@ Code taken from ripgrep-js https://github.com/alexlafroscia/ripgrep-js
 Modified to fix bugs
 */
 
-const { exec } = require('child_process');
+const { exec } = require("child_process");
 
 function formatResults(stdout) {
   stdout = stdout.trim();
@@ -14,16 +14,16 @@ function formatResults(stdout) {
   }
 
   return stdout
-    .split('\n')
+    .split("\n")
     .map((line) => JSON.parse(line))
-    .filter((jsonLine) => jsonLine.type === 'match')
+    .filter((jsonLine) => jsonLine.type === "match")
     .map((jsonLine) => jsonLine.data);
 }
 
 function ripGrep(cwd, optionsOrSearchTerm) {
   let options;
 
-  if (typeof optionsOrSearchTerm === 'string') {
+  if (typeof optionsOrSearchTerm === "string") {
     options = {
       string: optionsOrSearchTerm,
     };
@@ -32,17 +32,17 @@ function ripGrep(cwd, optionsOrSearchTerm) {
   }
 
   if (!cwd) {
-    return Promise.reject(new Error('No `cwd` provided'));
+    return Promise.reject(new Error("No `cwd` provided"));
   }
 
   if (arguments.length === 1) {
-    return Promise.reject(new Error('No search term provided'));
+    return Promise.reject(new Error("No search term provided"));
   }
 
-  let execString = 'rg --json';
-  if ('regex' in options) {
+  let execString = "rg --json";
+  if ("regex" in options) {
     execString = `${execString} -e ${options.regex}`;
-  } else if ('string' in options) {
+  } else if ("string" in options) {
     execString = `${execString} -F "${options.string}"`;
   }
 
@@ -66,14 +66,14 @@ function ripGrep(cwd, optionsOrSearchTerm) {
     execString = `${execString} --multiline`;
   }
 
-  execString+=` -- ${cwd}`
+  execString += ` -- ${cwd}`;
 
   return new Promise(function (resolve, reject) {
     exec(execString, (error, stdout, stderr) => {
-      if (!error || (error && stderr === '')) {
+      if (!error || (error && stderr === "")) {
         resolve(formatResults(stdout));
       } else {
-        throw Error("something went wrong lol")
+        throw Error("something went wrong lol");
       }
     });
   });
