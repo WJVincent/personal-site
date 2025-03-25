@@ -10,7 +10,7 @@ const pTagNoStyle =
 const pTagBasicStyle =
   "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, <s>it doesn't have any CSS</s>, there is no unnecessary bloat.";
 
-const parseRgOutput = (outputArr) => {
+const parseRgOutput = (outputArr=[]) => {
   const paths = outputArr.reduce((out, el) => {
     // remove dir and date prefix and .md suffix
     const pathArr = el.path.text.split('/');
