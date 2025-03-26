@@ -1,5 +1,7 @@
 # Why I'm Learning C
 
+[tags]:- c, learning, programming
+
 ---
 
 ## I want to be a better programmer

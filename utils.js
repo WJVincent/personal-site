@@ -3,7 +3,6 @@ const path = require("path");
 const showdown = require("showdown"); // markdown -> html convertor
 const { minify } = require("html-minifier");
 const { ripGrep: rg } = require("./ripgrep.js");
-const { search } = require("./routes/withColors.js");
 const convertor = new showdown.Converter({ tables: true });
 
 const pTagNoStyle =
@@ -134,13 +133,13 @@ const blogPostHTML = (indexHtml, templateStr, prefix) => {
   if (prefix === "basic") {
     return indexHtml.replace(
       /{%CONTENT%}/g,
-      `<a href="/basic/blog">&lt;- blog-index</a><div>${content}</div>`,
+      `<a href="/basic/blog">&lt;- blog-index</a><hr/><div>${content}</div>`,
     );
   }
 
   return indexHtml.replace(
     /{%CONTENT%}/g,
-    `<a href="/blog">&lt;- blog-index</a><div>${content}</div>`,
+    `<a href="/blog">&lt;- blog-index</a><hr/><div>${content}</div>`,
   );
 };
 
@@ -175,9 +174,18 @@ const blogIndexHTML = (prefix, templateStr) => {
 
 const searchIndexHTML = (prefix, content, templateStr, indexStr, pattern) => {
   const searchHTML = templateStr.replace(/{%CONTENT%}/, content);
-  let withContent = indexStr.replace(
+  let withContent;
+
+  if (prefix === "basic") {
+    withContent = indexStr.replace(
+      /{%CONTENT%}/g,
+      `<a href="/basic/blog">&lt;- blog-index</a><hr/><div>${searchHTML}</div>`,
+    );
+  }
+
+  withContent = indexStr.replace(
     /{%CONTENT%}/g,
-    `<a href="/blog">&lt;- blog-index</a><div>${searchHTML}</div>`,
+    `<a href="/blog">&lt;- blog-index</a><hr/><div>${searchHTML}</div>`,
   );
   let withSearchTerm = withContent.replace(/{%SEARCH_TERM%}/, `"${pattern}"`);
   return withSearchTerm;

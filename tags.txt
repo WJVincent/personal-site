@@ -1,0 +1,2 @@
+blog_posts/2023-11-27_why-im-learning-c.md:[tags]:- c, learning, programming
+blog_posts/2025-03-25_how-to-create-my-custom-bash-prompt.md:[tags]:- bash, tutorial, programming, shell

@@ -1,5 +1,7 @@
 # How To Create My Custom Bash Prompt 
 
+[tags]:- bash, tutorial, programming, shell
+
 ---
 
 Terminals are in. Neovim is the new hotness. Tmux is universally loved. TUIs are
