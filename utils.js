@@ -3,7 +3,8 @@ const path = require("path");
 const showdown = require("showdown"); // markdown -> html convertor
 const { minify } = require("html-minifier");
 const { ripGrep: rg } = require("./ripgrep.js");
-const convertor = new showdown.Converter({tables: true});
+const { search } = require("./routes/withColors.js");
+const convertor = new showdown.Converter({ tables: true });
 
 const pTagNoStyle =
   "This is powered by a simple server that responds with static html. It doesn't have any client side JavaScript, it doesn't have any CSS, there is no unnecessary bloat.";
@@ -174,7 +175,10 @@ const blogIndexHTML = (prefix, templateStr) => {
 
 const searchIndexHTML = (prefix, content, templateStr, indexStr, pattern) => {
   const searchHTML = templateStr.replace(/{%CONTENT%}/, content);
-  let withContent = indexStr.replace(/{%CONTENT%}/g, searchHTML);
+  let withContent = indexStr.replace(
+    /{%CONTENT%}/g,
+    `<a href="/blog">&lt;- blog-index</a><div>${searchHTML}</div>`,
+  );
   let withSearchTerm = withContent.replace(/{%SEARCH_TERM%}/, `"${pattern}"`);
   return withSearchTerm;
 };
