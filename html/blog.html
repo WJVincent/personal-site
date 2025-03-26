@@ -1,11 +1,17 @@
 <div>
-    <i>Posts in Reverse Chronological Order</i>
-    <form method="post" action="{%ROUTE_PREFIX%}/search">
-        <label for="full-text">Search Post Text</label>
-        <input type="search" name="full-text" />
-        <button type="submit">Search!</button>
-    </form>
-    <ul>
-        {%CONTENT%}
-    </ul>
+  <form method="post" action="{%ROUTE_PREFIX%}/search">
+    <label for="full-text">Search Post Text</label>
+    <input type="search" name="full-text" />
+    <button type="submit">Search!</button>
+  </form>
+  <form method="post" action="{%ROUTE_PREFIX%}/search-tags">
+    <label for="tag">Search With Tags</label>
+    <input type="text" name="tag" list="tags" />
+    <datalist id="tags">{%DATALIST%}</datalist>
+  </form>
+  <hr />
+  <i>Posts in Reverse Chronological Order</i>
+  <ul>
+    {%CONTENT%}
+  </ul>
 </div>
