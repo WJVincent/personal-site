@@ -166,10 +166,30 @@ const projectIndexHTML = (prefix, content) => {
 
 const blogIndexHTML = (prefix, templateStr) => {
   const postData = getBlogPostNames(prefix);
-  return templateStr.replace(
+  let content = templateStr.replace(
     /{%CONTENT%}/g,
     postData.map((post) => post[0]).join(""),
   );
+
+  const tagData = fs.readFileSync("tags.txt", "utf8");
+  const removePrefix = tagData
+    .split("\n")
+    .map((el) => el.split(":-")[1])
+    .filter((el) => el !== undefined)
+    .reduce((out, el) => {
+      const arr = el.split(",");
+      out.push(...arr);
+      return out;
+    }, [])
+    .map((el) => el.replace(" ", ""));
+  const uniqueTags = new Set(removePrefix);
+  const uniqueTagsArr = Array.from(uniqueTags);
+
+  const tagOptionList = uniqueTagsArr.map(
+    (el) => `<option value="${el}">${el}</option>`,
+  );
+
+  return content.replace(/{%DATALIST%}/g, tagOptionList.join("\n"));
 };
 
 const searchIndexHTML = (prefix, content, templateStr, indexStr, pattern) => {
