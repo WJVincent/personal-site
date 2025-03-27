@@ -5,11 +5,13 @@
     <button type="submit">Search!</button>
   </form>
   <form method="post" action="{%ROUTE_PREFIX%}/search-tags">
-    <label for="tag">Search With Tags</label>
+    <label for="tag">Search Post Tags</label>
     <input type="text" name="tag" list="tags" />
-    <datalist id="tags">{%DATALIST%}</datalist>
+    <span><datalist id="tags">{%DATALIST%}</datalist></span>
+    <button type="submit">Search!</button>
   </form>
   <hr />
-  <i>Search results for query: {%SEARCH_TERM%}</i>
+  <hr />
+  <i>Search results for {%SEARCH_TERM%}</i>
   {%CONTENT%}
 </div>

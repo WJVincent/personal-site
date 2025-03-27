@@ -68,6 +68,16 @@ app.post("/search", async (req, res) => {
   res.send(searchPage);
 });
 
+app.post("/search-tags", async (req, res) => {
+  const pattern = req.body["tag"];
+  const searchPage = await prepareHTML("", "search-tags", {
+    fileName: "search",
+    pattern,
+    tag: true,
+  });
+  res.send(searchPage);
+});
+
 app.use((_req, res, _next) => {
   res
     .status(404)

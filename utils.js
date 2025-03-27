@@ -27,7 +27,6 @@ const parseRgOutput = (outputArr = []) => {
 
     return out;
   }, {});
-
   return paths;
 };
 
@@ -66,7 +65,7 @@ const readFile = (dirName, fileName, type) => {
   }
 };
 
-const formatSearchResults = (prefix, data) => {
+const formatSearchResults = (prefix, data, route) => {
   if (Object.keys(data).length === 0) return "<p>No Results :(";
   let ulOut = "<ul>";
   for (let fileName in data) {
@@ -78,23 +77,25 @@ const formatSearchResults = (prefix, data) => {
         ? `<p><a href="/basic/blog/${date}_${title}">${title.split("-").join(" ")}</a> -- ${date}</p>`
         : `<p><a href="/blog/${date}_${title}">${title.split("-").join(" ")}</a> -- ${date}</p>`;
     li += postName;
-    li += "<ul>";
-    const lines = data[fileName].reduce((arr, el) => {
-      let innerLi = "<li>";
+    if (route === "search") {
+      li += "<ul>";
+      const lines = data[fileName].reduce((arr, el) => {
+        let innerLi = "<li>";
 
-      innerLi += `${el.lineNumber} : "${el.lineText}"`;
+        innerLi += `${el.lineNumber} : "${el.lineText}"`;
 
-      innerLi += "</li>";
+        innerLi += "</li>";
 
-      arr.push(innerLi);
+        arr.push(innerLi);
 
-      return arr;
-    }, []);
+        return arr;
+      }, []);
 
-    li += lines.join(" ");
-    li += "</ul>";
+      li += lines.join(" ");
+      li += "</ul>";
+    }
+
     li += "</li>";
-
     ulOut += li;
   }
   return ulOut;
@@ -192,7 +193,14 @@ const blogIndexHTML = (prefix, templateStr) => {
   return content.replace(/{%DATALIST%}/g, tagOptionList.join("\n"));
 };
 
-const searchIndexHTML = (prefix, content, templateStr, indexStr, pattern) => {
+const searchIndexHTML = (
+  prefix,
+  content,
+  templateStr,
+  indexStr,
+  pattern,
+  route,
+) => {
   const searchHTML = templateStr.replace(/{%CONTENT%}/, content);
   let withContent;
 
@@ -207,24 +215,70 @@ const searchIndexHTML = (prefix, content, templateStr, indexStr, pattern) => {
     /{%CONTENT%}/g,
     `<a href="/blog">&lt;- blog-index</a><hr/><div>${searchHTML}</div>`,
   );
-  let withSearchTerm = withContent.replace(/{%SEARCH_TERM%}/, `"${pattern}"`);
-  return withSearchTerm;
+
+  let withSearchTerm =
+    route === "search"
+      ? withContent.replace(/{%SEARCH_TERM%}/, `"query: ${pattern}"`)
+      : withContent.replace(/{%SEARCH_TERM%}/, `"tag: ${pattern}"`);
+
+  const tagData = fs.readFileSync("tags.txt", "utf8");
+  const removePrefix = tagData
+    .split("\n")
+    .map((el) => el.split(":-")[1])
+    .filter((el) => el !== undefined)
+    .reduce((out, el) => {
+      const arr = el.split(",");
+      out.push(...arr);
+      return out;
+    }, [])
+    .map((el) => el.replace(" ", ""));
+  const uniqueTags = new Set(removePrefix);
+  const uniqueTagsArr = Array.from(uniqueTags);
+
+  const tagOptionList = uniqueTagsArr.map(
+    (el) => `<option value="${el}">${el}</option>`,
+  );
+
+  return withSearchTerm.replace(/{%DATALIST%}/g, tagOptionList.join("\n"));
 };
 
-const injectContent = (indexStr, templateStr, route, prefix, data, pattern) => {
+const injectContent = (
+  indexStr,
+  templateStr,
+  route,
+  prefix,
+  data = [],
+  pattern,
+) => {
   let content;
   if (route === "blog_post") {
     content = blogPostHTML(indexStr, templateStr, prefix);
-  } else if (route === "search") {
-    content = formatSearchResults(prefix, parseRgOutput(data));
+  } else if (route === "search" || route === "search-tags") {
+    content =
+      route === "search"
+        ? formatSearchResults(prefix, parseRgOutput(data), route)
+        : formatSearchResults(
+            prefix,
+            parseRgOutput(data.filter((el) => el.lines.text.includes(pattern))),
+            route,
+          );
   } else {
     content = normalPageHTML(indexStr, templateStr, prefix);
   }
 
   if (route === "blog") return blogIndexHTML(prefix, content);
   if (route === "projects") return projectIndexHTML(prefix, content);
-  if (route === "search")
-    return searchIndexHTML(prefix, content, templateStr, indexStr, pattern);
+  if (route === "search" || route === "search-tags") {
+    console.log("search tags");
+    return searchIndexHTML(
+      prefix,
+      content,
+      templateStr,
+      indexStr,
+      pattern,
+      route,
+    );
+  }
   return content;
 };
 
@@ -243,11 +297,13 @@ const prepareHTML = async (prefix, route, readFileOpts) => {
   if (!readFileOpts.dirName) readFileOpts.dirName = "html";
   if (!readFileOpts.fileType) readFileOpts.fileType = "html";
 
-  const { dirName, fileName, fileType, pattern } = readFileOpts;
+  const { dirName, fileName, fileType, pattern, tag } = readFileOpts;
 
   let data;
-  if (pattern) {
+  if (pattern && !tag) {
     data = await rg(path.join(__dirname, "blog_posts"), pattern);
+  } else if (pattern && tag) {
+    data = await rg(path.join(__dirname, "blog_posts"), "[tags]:-");
   }
 
   const index = readFile("html", "index", "html");
