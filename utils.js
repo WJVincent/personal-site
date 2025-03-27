@@ -269,7 +269,6 @@ const injectContent = (
   if (route === "blog") return blogIndexHTML(prefix, content);
   if (route === "projects") return projectIndexHTML(prefix, content);
   if (route === "search" || route === "search-tags") {
-    console.log("search tags");
     return searchIndexHTML(
       prefix,
       content,
