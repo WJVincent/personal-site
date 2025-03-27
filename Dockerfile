@@ -19,5 +19,7 @@ COPY . .
 # Expose the app port (adjust this based on your app's configuration)
 EXPOSE 3000
 
+RUN ./get_tags.sh
+
 # Command to run the app
 CMD ["node", "app.js"]
