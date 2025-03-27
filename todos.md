@@ -1,4 +1,3 @@
 # TODO's
 
-- Add tag system to blog posts
-
+- css for "pretty'ish" version of search inputs and search results page
