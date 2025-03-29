@@ -7,6 +7,16 @@ go](https://go.dev/tour/welcome/1)" interactive introduction to golang.
 
 ---
 
+- [Basics](#basics)
+    - [Packages, variables, functions](#packagesvariablesfunctions)
+    - [Flow control statements: for, if, else, switch, defer](#flowcontrolstatementsforifelseswitchdefer)
+    - [More types: structs, slices, and maps](#moretypesstructsslicesandmaps)
+- [Methods and interfaces](#methodsandinterfaces)
+- [Generics](#generics)
+- [Concurrency](#concurrency)
+
+---
+    
 ## Basics
 
 ### Packages, variables, functions
@@ -377,7 +387,7 @@ func main() {
 	fmt.Println(needFloat(Big))
 }
 ```
-
+    
 ### Flow control statements: for, if, else, switch, defer
 
 #### For
